@@ -27,8 +27,16 @@ class _CustomGoogleMapState extends State<CustomGoogleMap> {
         northeast: LatLng(30.04757878332655, 31.23375767722881),
       ),
     );
-
+    initMarkers();
     super.initState();
+  }
+
+  void initMarkers() {
+    var myMarker = const Marker(
+      markerId: MarkerId('1'),
+      position: LatLng(30.039568863136346, 31.224324129782307),
+    );
+    markers.add(myMarker);
   }
 
   void initStyle() async {
@@ -38,11 +46,15 @@ class _CustomGoogleMapState extends State<CustomGoogleMap> {
   }
 
   late GoogleMapController _googleMapController;
+
+  Set<Marker> markers = {};
   @override
   Widget build(BuildContext context) {
     return Stack(
       children: [
         GoogleMap(
+            markers: markers,
+
             // map type when using style makesure hash map type
             // mapType: MapType.normal,
             //on change on map
