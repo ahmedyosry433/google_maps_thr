@@ -27,7 +27,14 @@ class _CustomGoogleMapState extends State<CustomGoogleMap> {
         northeast: LatLng(30.04757878332655, 31.23375767722881),
       ),
     );
+
     super.initState();
+  }
+
+  void initStyle() async {
+    String mapStyle = await DefaultAssetBundle.of(context)
+        .loadString('assets/map_style.json');
+    _googleMapController.setMapStyle(mapStyle);
   }
 
   late GoogleMapController _googleMapController;
@@ -36,9 +43,13 @@ class _CustomGoogleMapState extends State<CustomGoogleMap> {
     return Stack(
       children: [
         GoogleMap(
-            mapType: MapType.hybrid,
+            // map type when using style makesure hash map type
+            // mapType: MapType.normal,
             //on change on map
-            onMapCreated: (cotroller) => _googleMapController = cotroller,
+            onMapCreated: (cotroller) {
+              _googleMapController = cotroller;
+              initStyle();
+            },
             // تحديد التحرك بالكاميرا
             // cameraTargetBounds: _cameraTargetBounds,
 
