@@ -32,14 +32,22 @@ class _CustomGoogleMapState extends State<CustomGoogleMap> {
     super.initState();
   }
 
-  void initMarkers() {
+  void initMarkers() async {
+    //? add coustom marker icon
+    var customMarkerIcon = await BitmapDescriptor.asset(
+        ImageConfiguration(size: Size(45, 45)), 'assets/location.png');
     for (PlaceModel place in places) {
       markers.add(Marker(
-        infoWindow: InfoWindow(title: place.name),
+        icon: customMarkerIcon,
+        infoWindow: InfoWindow(
+          title: place.name,
+          snippet: 'TEST',
+        ),
         markerId: MarkerId(place.id),
         position: place.latLng,
       ));
     }
+    setState(() {});
   }
 
   void initStyle() async {
@@ -56,7 +64,8 @@ class _CustomGoogleMapState extends State<CustomGoogleMap> {
     return Stack(
       children: [
         GoogleMap(
-
+          
+            zoomControlsEnabled: false,
             //? map type when using style makesure hash map type
             // mapType: MapType.normal,
             //?on change on map
