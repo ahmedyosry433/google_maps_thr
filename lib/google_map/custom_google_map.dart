@@ -32,6 +32,7 @@ class _CustomGoogleMapState extends State<CustomGoogleMap> {
     super.initState();
   }
 
+//! init Markers
   void initMarkers() async {
     //? add coustom marker icon
     var customMarkerIcon = await BitmapDescriptor.asset(
@@ -47,9 +48,19 @@ class _CustomGoogleMapState extends State<CustomGoogleMap> {
         position: place.latLng,
       ));
     }
+
     setState(() {});
   }
 
+//! init Markers
+  void initPolyline() async {
+    Set<Polyline> polylineFromMap =
+        polyline.map((polyline) => polyline).toSet();
+
+    polylineInHome.addAll(polylineFromMap);
+  }
+
+//! init Style Func
   void initStyle() async {
     String mapStyle = await DefaultAssetBundle.of(context)
         .loadString('assets/map_style.json');
@@ -59,13 +70,16 @@ class _CustomGoogleMapState extends State<CustomGoogleMap> {
   late GoogleMapController _googleMapController;
 
   Set<Marker> markers = {};
+  Set<Polyline> polylineInHome = {};
   @override
   Widget build(BuildContext context) {
     return Stack(
       children: [
         GoogleMap(
-          
-            zoomControlsEnabled: false,
+
+            //?
+            polylines: polylineInHome,
+            // zoomControlsEnabled: false,
             //? map type when using style makesure hash map type
             // mapType: MapType.normal,
             //?on change on map
@@ -75,6 +89,7 @@ class _CustomGoogleMapState extends State<CustomGoogleMap> {
             onMapCreated: (cotroller) {
               _googleMapController = cotroller;
               initStyle();
+              initPolyline();
             },
             markers: markers,
 

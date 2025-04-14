@@ -1,3 +1,4 @@
+import 'package:flutter/material.dart';
 import 'package:google_maps_flutter/google_maps_flutter.dart';
 
 class PlaceModel {
@@ -31,4 +32,25 @@ List<PlaceModel> places = [
     name: 'sphinx_airport',
     latLng: LatLng(30.105787649748283, 30.882826365032162),
   ),
+];
+
+List<Polyline> polyline = [
+  Polyline(
+      width: 4,
+      color: Colors.brown,
+      startCap: Cap.roundCap,
+      polylineId: PolylineId('5'),
+
+      //? shap of line
+      // patterns: [
+      //   PatternItem.dot
+      // ],
+      points: [
+        LatLng(30.105787649748283, 30.882826365032162),
+        LatLng(31.192071420462067, 29.932813693533546),
+        LatLng(
+          31.155339682806684,
+          29.848346936482027,
+        ),
+      ]),
 ];
