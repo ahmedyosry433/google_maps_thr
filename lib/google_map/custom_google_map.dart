@@ -1,4 +1,5 @@
 import 'package:flutter/material.dart';
+import 'package:google_maps/google_map/model/place_model.dart';
 import 'package:google_maps_flutter/google_maps_flutter.dart';
 
 class CustomGoogleMap extends StatefulWidget {
@@ -15,7 +16,7 @@ class _CustomGoogleMapState extends State<CustomGoogleMap> {
   void initState() {
     //init camera
     _initialCameraPosition = CameraPosition(
-      target: LatLng(30.039568863136346, 31.224324129782307),
+      target: places[1].latLng,
       zoom: 12,
     );
 
@@ -32,11 +33,13 @@ class _CustomGoogleMapState extends State<CustomGoogleMap> {
   }
 
   void initMarkers() {
-    var myMarker = const Marker(
-      markerId: MarkerId('1'),
-      position: LatLng(30.039568863136346, 31.224324129782307),
-    );
-    markers.add(myMarker);
+    for (PlaceModel place in places) {
+      markers.add(Marker(
+        infoWindow: InfoWindow(title: place.name),
+        markerId: MarkerId(place.id),
+        position: place.latLng,
+      ));
+    }
   }
 
   void initStyle() async {
@@ -53,19 +56,20 @@ class _CustomGoogleMapState extends State<CustomGoogleMap> {
     return Stack(
       children: [
         GoogleMap(
-            markers: markers,
 
-            // map type when using style makesure hash map type
+            //? map type when using style makesure hash map type
             // mapType: MapType.normal,
-            //on change on map
+            //?on change on map
+
+            //? تحديد التحرك بالكاميرا
+            // cameraTargetBounds: _cameraTargetBounds,
             onMapCreated: (cotroller) {
               _googleMapController = cotroller;
               initStyle();
             },
-            // تحديد التحرك بالكاميرا
-            // cameraTargetBounds: _cameraTargetBounds,
+            markers: markers,
 
-            //init camera
+            //?init camera
             initialCameraPosition: _initialCameraPosition),
         Positioned(
             bottom: 16,
@@ -73,9 +77,8 @@ class _CustomGoogleMapState extends State<CustomGoogleMap> {
             right: 16,
             child: ElevatedButton(
                 onPressed: () {
-                  CameraPosition _newCameraPosition = CameraPosition(
-                      target: LatLng(31.2119788242409, 29.929802146194174),
-                      zoom: 12);
+                  CameraPosition _newCameraPosition =
+                      CameraPosition(target: places[2].latLng, zoom: 12);
 
                   _googleMapController.animateCamera(
                     // CameraUpdate.newCameraPosition(_newCameraPosition),
