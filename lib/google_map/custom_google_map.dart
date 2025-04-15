@@ -52,12 +52,20 @@ class _CustomGoogleMapState extends State<CustomGoogleMap> {
     setState(() {});
   }
 
-//! init Markers
+//! init Polyline
   void initPolyline() async {
     Set<Polyline> polylineFromMap =
         polyline.map((polyline) => polyline).toSet();
 
     polylineInHome.addAll(polylineFromMap);
+  }
+
+//! init Polygon
+  void initPolygon() async {
+    Set<Polygon> polygonFromMap =
+        polygonList.map((polyline) => polyline).toSet();
+
+    polygonInHome.addAll(polygonFromMap);
   }
 
 //! init Style Func
@@ -71,34 +79,53 @@ class _CustomGoogleMapState extends State<CustomGoogleMap> {
 
   Set<Marker> markers = {};
   Set<Polyline> polylineInHome = {};
+  Set<Polygon> polygonInHome = {};
   @override
   Widget build(BuildContext context) {
     return Stack(
       children: [
         GoogleMap(
-
-            //?
-            polylines: polylineInHome,
+            circles: {
+              Circle(
+                circleId: CircleId('1'),
+                fillColor: Colors.red.withOpacity(0.3),
+                radius: 2 * 1000,
+                strokeWidth: 2,
+                strokeColor: Colors.white,
+                center: places[1].latLng,
+              ),
+            },
+            //? polygon
+            // polygons: polygonInHome,
+            //? polyline
+            // polylines: polylineInHome,
             // zoomControlsEnabled: false,
             //? map type when using style makesure hash map type
             // mapType: MapType.normal,
-            //?on change on map
 
             //? تحديد التحرك بالكاميرا
             // cameraTargetBounds: _cameraTargetBounds,
+            //? to remove curent location from ios
+            myLocationButtonEnabled: false,
+
+            //?on change on map
             onMapCreated: (cotroller) {
               _googleMapController = cotroller;
               initStyle();
               initPolyline();
+              initPolygon();
             },
             markers: markers,
 
             //?init camera
             initialCameraPosition: _initialCameraPosition),
+
+        //!====================== BTN ==========================
+
         Positioned(
             bottom: 16,
-            left: 16,
-            right: 16,
+            left: 90,
+            right: 90,
             child: ElevatedButton(
                 onPressed: () {
                   CameraPosition _newCameraPosition =

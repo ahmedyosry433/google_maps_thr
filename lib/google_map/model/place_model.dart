@@ -54,3 +54,47 @@ List<Polyline> polyline = [
         ),
       ]),
 ];
+List<Polygon> polygonList = [
+  Polygon(
+
+      // to make holes in polygen
+      holes: [
+        // [
+        //   LatLng(31.246394887348455, 29.97239182523352),
+        //   // LatLng(31.192071420462067, 29.932813693533546),
+        //   LatLng(31.121565748055243, 29.829226246005234),
+        //   LatLng(31.16094140640586, 29.973765116161367),
+        // ]
+      ],
+      strokeColor: Colors.transparent,
+      strokeWidth: 2,
+      fillColor: Colors.black.withOpacity(0.2),
+      polygonId: PolygonId('5'),
+
+      //? shap of line
+      // patterns: [
+      //   PatternItem.dot
+      // ],
+      points: [
+        LatLng(31.246394887348455, 29.97239182523352),
+        // LatLng(31.192071420462067, 29.932813693533546),
+        LatLng(31.121565748055243, 29.829226246005234),
+        LatLng(31.16094140640586, 29.973765116161367),
+        LatLng(31.20176902241748, 30.056849217296246),
+      ]),
+  Polygon(
+      strokeColor: Colors.transparent,
+      strokeWidth: 2,
+      fillColor: Colors.black.withOpacity(0.2),
+      polygonId: PolygonId('5'),
+
+      //? shap of line
+      // patterns: [
+      //   PatternItem.dot
+      // ],
+      points: [
+        LatLng(31.08599607159354, 29.894114241687788),
+        LatLng(31.028056623733594, 29.76399492627407),
+        LatLng(31.070411771042913, 29.928103192152058),
+      ]),
+];
