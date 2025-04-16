@@ -2,14 +2,14 @@ import 'package:flutter/material.dart';
 import 'package:google_maps/google_map/model/place_model.dart';
 import 'package:google_maps_flutter/google_maps_flutter.dart';
 
-class CustomGoogleMap extends StatefulWidget {
-  const CustomGoogleMap({super.key});
+class CustomGoogleMapPage extends StatefulWidget {
+  const CustomGoogleMapPage({super.key});
 
   @override
-  State<CustomGoogleMap> createState() => _CustomGoogleMapState();
+  State<CustomGoogleMapPage> createState() => _CustomGoogleMapPageState();
 }
 
-class _CustomGoogleMapState extends State<CustomGoogleMap> {
+class _CustomGoogleMapPageState extends State<CustomGoogleMapPage> {
   late CameraPosition _initialCameraPosition;
   late CameraTargetBounds _cameraTargetBounds;
   @override
@@ -52,29 +52,6 @@ class _CustomGoogleMapState extends State<CustomGoogleMap> {
     setState(() {});
   }
 
-//! init Polyline
-  void initPolyline() async {
-    Set<Polyline> polylineFromMap =
-        polyline.map((polyline) => polyline).toSet();
-
-    polylineInHome.addAll(polylineFromMap);
-  }
-
-//! init Polygon
-  void initPolygon() async {
-    Set<Polygon> polygonFromMap =
-        polygonList.map((polyline) => polyline).toSet();
-
-    polygonInHome.addAll(polygonFromMap);
-  }
-
-//! init Style Func
-  void initStyle() async {
-    String mapStyle = await DefaultAssetBundle.of(context)
-        .loadString('assets/map_style.json');
-    _googleMapController.setMapStyle(mapStyle);
-  }
-
   late GoogleMapController _googleMapController;
 
   Set<Marker> markers = {};
@@ -85,16 +62,16 @@ class _CustomGoogleMapState extends State<CustomGoogleMap> {
     return Stack(
       children: [
         GoogleMap(
-            circles: {
-              Circle(
-                circleId: CircleId('1'),
-                fillColor: Colors.red.withOpacity(0.3),
-                radius: 2 * 1000,
-                strokeWidth: 2,
-                strokeColor: Colors.white,
-                center: places[1].latLng,
-              ),
-            },
+            // circles: {
+            //   Circle(
+            //     circleId: CircleId('1'),
+            //     fillColor: Colors.red.withOpacity(0.3),
+            //     radius: 2 * 1000,
+            //     strokeWidth: 2,
+            //     strokeColor: Colors.white,
+            //     center: places[1].latLng,
+            //   ),
+            // },
             //? polygon
             // polygons: polygonInHome,
             //? polyline
@@ -112,16 +89,15 @@ class _CustomGoogleMapState extends State<CustomGoogleMap> {
             onMapCreated: (cotroller) {
               _googleMapController = cotroller;
               initStyle();
-              initPolyline();
-              initPolygon();
+              // initPolyline();
+              // initPolygon();
             },
             markers: markers,
 
             //?init camera
             initialCameraPosition: _initialCameraPosition),
 
-        //!====================== BTN ==========================
-
+        //*====================== BTN ==========================
         Positioned(
             bottom: 16,
             left: 90,
@@ -142,5 +118,28 @@ class _CustomGoogleMapState extends State<CustomGoogleMap> {
                 child: Text('change location')))
       ],
     );
+  }
+
+  //! init Polyline
+  void initPolyline() async {
+    Set<Polyline> polylineFromMap =
+        polyline.map((polyline) => polyline).toSet();
+
+    polylineInHome.addAll(polylineFromMap);
+  }
+
+//! init Polygon
+  void initPolygon() async {
+    Set<Polygon> polygonFromMap =
+        polygonList.map((polyline) => polyline).toSet();
+
+    polygonInHome.addAll(polygonFromMap);
+  }
+
+//! init Style Func
+  void initStyle() async {
+    String mapStyle = await DefaultAssetBundle.of(context)
+        .loadString('assets/map_style.json');
+    _googleMapController.setMapStyle(mapStyle);
   }
 }
