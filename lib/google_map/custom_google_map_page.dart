@@ -1,4 +1,5 @@
 import 'package:flutter/material.dart';
+import 'package:google_maps/google_map/location_services.dart';
 import 'package:google_maps/google_map/model/place_model.dart';
 import 'package:google_maps_flutter/google_maps_flutter.dart';
 
@@ -12,15 +13,16 @@ class CustomGoogleMapPage extends StatefulWidget {
 class _CustomGoogleMapPageState extends State<CustomGoogleMapPage> {
   late CameraPosition _initialCameraPosition;
   late CameraTargetBounds _cameraTargetBounds;
+
   @override
   void initState() {
-    //init camera
+    //?init camera
     _initialCameraPosition = CameraPosition(
       target: places[1].latLng,
       zoom: 12,
     );
 
-    // تحديد التحرك بالكاميرا
+    //? تحديد التحرك بالكاميرا
 
     _cameraTargetBounds = CameraTargetBounds(
       LatLngBounds(
@@ -28,7 +30,10 @@ class _CustomGoogleMapPageState extends State<CustomGoogleMapPage> {
         northeast: LatLng(30.04757878332655, 31.23375767722881),
       ),
     );
-    initMarkers();
+    // initMarkers();
+
+    _locationService = LocationService();
+
     super.initState();
   }
 
@@ -52,50 +57,54 @@ class _CustomGoogleMapPageState extends State<CustomGoogleMapPage> {
     setState(() {});
   }
 
-  late GoogleMapController _googleMapController;
+  GoogleMapController? _googleMapController;
 
+  late LocationService _locationService;
   Set<Marker> markers = {};
   Set<Polyline> polylineInHome = {};
   Set<Polygon> polygonInHome = {};
+  LatLng? myLocationData;
   @override
   Widget build(BuildContext context) {
     return Stack(
       children: [
         GoogleMap(
-            // circles: {
-            //   Circle(
-            //     circleId: CircleId('1'),
-            //     fillColor: Colors.red.withOpacity(0.3),
-            //     radius: 2 * 1000,
-            //     strokeWidth: 2,
-            //     strokeColor: Colors.white,
-            //     center: places[1].latLng,
-            //   ),
-            // },
-            //? polygon
-            // polygons: polygonInHome,
-            //? polyline
-            // polylines: polylineInHome,
-            // zoomControlsEnabled: false,
-            //? map type when using style makesure hash map type
-            // mapType: MapType.normal,
+          // circles: {
+          //   Circle(
+          //     circleId: CircleId('1'),
+          //     fillColor: Colors.red.withOpacity(0.3),
+          //     radius: 2 * 1000,
+          //     strokeWidth: 2,
+          //     strokeColor: Colors.white,
+          //     center: places[1].latLng,
+          //   ),
+          // },
+          //? polygon
+          // polygons: polygonInHome,
+          //? polyline
+          // polylines: polylineInHome,
+          // zoomControlsEnabled: false,
+          //? map type when using style makesure hash map type
+          // mapType: MapType.normal,
 
-            //? تحديد التحرك بالكاميرا
-            // cameraTargetBounds: _cameraTargetBounds,
-            //? to remove curent location from ios
-            myLocationButtonEnabled: false,
+          //? تحديد التحرك بالكاميرا
+          // cameraTargetBounds: _cameraTargetBounds,
+          //? to remove curent location from ios
+          myLocationButtonEnabled: false,
 
-            //?on change on map
-            onMapCreated: (cotroller) {
-              _googleMapController = cotroller;
-              initStyle();
-              // initPolyline();
-              // initPolygon();
-            },
-            markers: markers,
+          //?on change on map
+          onMapCreated: (cotroller) {
+            _googleMapController = cotroller;
+            initStyle();
+            // initPolyline();
+            // initPolygon();
+            updateMyLocation();
+          },
+          markers: markers,
 
-            //?init camera
-            initialCameraPosition: _initialCameraPosition),
+          //?init camera
+          initialCameraPosition: _initialCameraPosition,
+        ),
 
         //*====================== BTN ==========================
         Positioned(
@@ -104,10 +113,10 @@ class _CustomGoogleMapPageState extends State<CustomGoogleMapPage> {
             right: 90,
             child: ElevatedButton(
                 onPressed: () {
-                  CameraPosition _newCameraPosition =
-                      CameraPosition(target: places[2].latLng, zoom: 12);
+                  // CameraPosition _newCameraPosition =
+                  //     CameraPosition(target: places[2].latLng, zoom: 12);
 
-                  _googleMapController.animateCamera(
+                  _googleMapController!.animateCamera(
                     // CameraUpdate.newCameraPosition(_newCameraPosition),
                     //? best way to update latlng
                     CameraUpdate.newLatLng(
@@ -140,6 +149,31 @@ class _CustomGoogleMapPageState extends State<CustomGoogleMapPage> {
   void initStyle() async {
     String mapStyle = await DefaultAssetBundle.of(context)
         .loadString('assets/map_style.json');
-    _googleMapController.setMapStyle(mapStyle);
+    _googleMapController!.setMapStyle(mapStyle);
+  }
+
+//! Update My Location Func
+  void updateMyLocation() async {
+    await _locationService.checkAndRequestLocationService();
+    bool hasPermission =
+        await _locationService.checkAndRequestLocationPermission();
+//!=============================================================================
+    if (hasPermission) {
+      _locationService.getRealTimeLocationData((locationData) {
+        var myMarker = Marker(
+            markerId: MarkerId('90'),
+            position: LatLng(locationData.latitude!, locationData.longitude!));
+        markers.add(myMarker);
+        //*=========================================================
+        _googleMapController?.animateCamera(
+          CameraUpdate.newCameraPosition(
+            CameraPosition(
+                target: LatLng(locationData.latitude!, locationData.longitude!),
+                zoom: 15),
+          ),
+        );
+        setState(() {});
+      });
+    }
   }
 }
