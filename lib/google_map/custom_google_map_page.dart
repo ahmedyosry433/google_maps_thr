@@ -42,25 +42,24 @@ class _CustomGoogleMapPageState extends State<CustomGoogleMapPage> {
     //? add coustom marker icon
     var customMarkerIcon = await BitmapDescriptor.asset(
         ImageConfiguration(size: Size(45, 45)), 'assets/location.png');
-    for (PlaceModel place in places) {
-      markers.add(Marker(
-        icon: customMarkerIcon,
-        infoWindow: InfoWindow(
-          title: place.name,
-          snippet: 'TEST',
-        ),
-        markerId: MarkerId(place.id),
-        position: place.latLng,
-      ));
-    }
 
+    var marks = places
+        .map((place) => Marker(
+              markerId: MarkerId(place.id),
+              position: place.latLng,
+              infoWindow: InfoWindow(title: place.name, snippet: 'TEST'),
+              icon: customMarkerIcon,
+            ))
+        .toSet();
+
+    _markers.addAll(marks);
     setState(() {});
   }
 
   GoogleMapController? _googleMapController;
 
   late LocationService _locationService;
-  Set<Marker> markers = {};
+  Set<Marker> _markers = {};
   Set<Polyline> polylineInHome = {};
   Set<Polygon> polygonInHome = {};
   LatLng? myLocationData;
@@ -100,7 +99,7 @@ class _CustomGoogleMapPageState extends State<CustomGoogleMapPage> {
             // initPolygon();
             updateMyLocation();
           },
-          markers: markers,
+          markers: _markers,
 
           //?init camera
           initialCameraPosition: _initialCameraPosition,
@@ -163,7 +162,7 @@ class _CustomGoogleMapPageState extends State<CustomGoogleMapPage> {
         var myMarker = Marker(
             markerId: MarkerId('90'),
             position: LatLng(locationData.latitude!, locationData.longitude!));
-        markers.add(myMarker);
+        _markers.add(myMarker);
         //*=========================================================
         _googleMapController?.animateCamera(
           CameraUpdate.newCameraPosition(
